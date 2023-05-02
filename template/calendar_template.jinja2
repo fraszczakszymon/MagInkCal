@@ -177,14 +177,22 @@
             white-space: nowrap;
             width: 126px;
         }
+
+        .event.important {
+            color: var(--red);
+        }
+
+        .day.past-day .event.important {
+            color: var(--gray);
+        }
         
         .day-events {
             height: {{ max_events_per_day * 24 }}px;
         }
         
         .event-hour {
-            color: var(--gray);
-            font-weight: 500;
+            color: var(--black);
+            font-weight: 900;
         }
 
         .event-more {
@@ -217,8 +225,7 @@
         }
 
         .upcoming-days-header {
-            margin-bottom: 20px;
-            font-size: 2rem;
+            font-size: 1rem;
             font-weight: 500;
             text-align: center;
         }
@@ -246,7 +253,7 @@
             flex-direction: row;
             margin-top: auto;
             margin-bottom: 20px;
-            padding: 20px 20px 0 20px;
+            padding: 10px 20px 0 20px;
         }
 
         .weather-container {
@@ -258,16 +265,16 @@
         .weather-image {
             align-items: center;
             display: flex;
-            height: 64px;
+            height: 48px;
             justify-content: center;
             margin: auto;
-            width: 64px;
+            width: 48px;
             text-align: center;
         }
 
         .weather-image img {
-            height: 64px;
-            width: 64px;
+            height: 48px;
+            width: 48px;
         }
 
         .weather-hour {
@@ -334,17 +341,17 @@
             {% for index, upcoming_day in upcoming_days %}
                 <div class="upcoming-days-column">
                     <div class="upcoming-days-header">{{ i18n.upcoming_days[index] }}</div>
-                    <div class="upcoming-events">
-                        {% for event in upcoming_day.events %}
-                            <div class="event {% if event.important %}important{% endif %}">
-                                {% if not event.all_day %}<span class="event-hour">{{ event.start_date.strftime('%H:%M') }}</span>{% endif %}
-                                <span class="event-summary">{{ event.summary }}</span>
-                            </div>
-                        {% endfor %}
-                        {% if upcoming_day.events|length == 0 %}
-                            <div class="no-events">{{ i18n.no_events }}</div>
-                        {% endif %}
-                    </div>
+{#                    <div class="upcoming-events">#}
+{#                        {% for event in upcoming_day.events %}#}
+{#                            <div class="event {% if event.important %}important{% endif %}">#}
+{#                                {% if not event.all_day %}<span class="event-hour">{{ event.start_date.strftime('%H:%M') }}</span>{% endif %}#}
+{#                                <span class="event-summary">{{ event.summary }}</span>#}
+{#                            </div>#}
+{#                        {% endfor %}#}
+{#                        {% if upcoming_day.events|length == 0 %}#}
+{#                            <div class="no-events">{{ i18n.no_events }}</div>#}
+{#                        {% endif %}#}
+{#                    </div>#}
                     {% if weather_forecast %}
                         <div class="upcoming-weather">
                             {% for hour in weather_forecast[index].hours %}

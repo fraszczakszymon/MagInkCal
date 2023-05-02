@@ -9,7 +9,7 @@ from pytz import timezone
 from typing import List
 
 
-FORECAST_HOURS = ("06:00", "12:00", "18:00", "00:00")
+FORECAST_HOURS = ("06:00", "12:00", "15:00", "18:00", "00:00")
 
 ICONS_MAP = {
     "Sunny": "02",
@@ -197,7 +197,7 @@ class Weather:
                         ForecastHour(
                             condition=forecast_hour.condition.text,
                             hour=forecast_hour.time.split(" ")[-1],
-                            is_day=forecast_hour.is_day == "1",
+                            is_day=forecast_hour.is_day == 1,
                             temperature=round(forecast_hour.temp_c)
                         )
                     )
