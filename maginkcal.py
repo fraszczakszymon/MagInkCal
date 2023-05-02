@@ -33,8 +33,8 @@ def main():
         display_service = Display(config.screen_width, config.screen_height)
         if calendar.today.weekday() == 0:
             display_service.calibrate(cycles=0)  # calibrate display once a week to prevent ghosting
-            display_service.update(black_image, red_image)
-            display_service.sleep()
+        display_service.update(black_image, red_image)
+        display_service.sleep()
     except Exception as e:
         logger.error(e)
 
