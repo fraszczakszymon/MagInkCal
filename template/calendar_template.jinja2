@@ -1,0 +1,361 @@
+<html>
+<head>
+    <style>
+        @font-face {
+          font-family: "Lato";
+          src: url("../static/fonts/Lato/Lato-Thin.ttf") format("truetype");
+          font-weight: 100;
+          font-style: normal;
+        }
+        
+        @font-face {
+          font-family: "Lato";
+          src: url("../static/fonts/Lato/Lato-ThinItalic.ttf") format("truetype");
+          font-weight: 100;
+          font-style: italic;
+        }
+        
+        @font-face {
+          font-family: "Lato";
+          src: url("../static/fonts/Lato/Lato-Light.ttf") format("truetype");
+          font-weight: 300;
+          font-style: normal;
+        }
+        
+        @font-face {
+          font-family: "Lato";
+          src: url("../static/fonts/Lato/Lato-LightItalic.ttf") format("truetype");
+          font-weight: 300;
+          font-style: italic;
+        }
+        
+        @font-face {
+          font-family: "Lato";
+          src: url("../static/fonts/Lato/Lato-Regular.ttf") format("truetype");
+          font-weight: normal;
+          font-style: normal;
+        }
+        
+        @font-face {
+          font-family: "Lato";
+          src: url("../static/fonts/Lato/Lato-Italic.ttf") format("truetype");
+          font-weight: normal;
+          font-style: italic;
+        }
+        
+        @font-face {
+          font-family: "Lato";
+          src: url("../static/fonts/Lato/Lato-Bold.ttf") format("truetype");
+          font-weight: bold;
+          font-style: normal;
+        }
+        
+        @font-face {
+          font-family: "Lato";
+          src: url("../static/fonts/Lato/Lato-BoldItalic.ttf") format("truetype");
+          font-weight: bold;
+          font-style: italic;
+        }
+        
+        @font-face {
+          font-family: "Lato";
+          src: url("../static/fonts/Lato/Lato-Black.ttf") format("truetype");
+          font-weight: 900;
+          font-style: normal;
+        }
+        
+        @font-face {
+          font-family: "Lato";
+          src: url("../static/fonts/Lato/Lato-BlackItalic.ttf") format("truetype");
+          font-weight: 900;
+          font-style: italic;
+        }
+        
+        :root {
+            --red: #dc3545;
+            --white: #fff;
+            --gray: #6c757d;
+            --gray-dark: #343a40;
+            --black: #000;
+        }
+        
+        body {
+            background: #eee;
+            font-family: 'Lato', sans-serif;
+            margin: 0;
+        }
+        
+        .calendar-container {
+            background: #fff;
+            display: flex;
+            flex-direction: column;
+            height: {{ height }}px;
+            margin: 0 auto;
+            position: relative;
+            width: {{ width }}px;
+        }
+        
+        .today-header {
+            padding: 20px;
+        }
+        
+        .today-header .today-day-number {
+            font-weight: 900;
+            font-size: 4rem;
+            line-height: 3rem;
+        }
+        
+        .today-header .month {
+            font-size: 2rem;
+            margin-left: 5px;
+        }
+        
+        .battery {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+        }
+        
+        .battery img {
+            width: 30px;
+        }
+        
+        .days-container {
+            display: flex;
+            flex-wrap: wrap;
+            width: 944px;
+            margin: 0 20px;
+        }
+        
+        .day {
+            display: flex;
+            flex: 1 1 126px;
+            flex-direction: column;
+            margin: 10px 0 10px 10px;
+            text-align: center;
+        }
+        
+        .day:nth-child(7n+1) {
+            margin-left: 0;
+        }
+        
+        .day .day-name {
+            color: var(--gray);
+            font-size: 1.5rem;
+            font-weight: 300;
+            margin: 0 auto;
+        }
+        
+        .day .day-number {
+            font-size: 2rem;
+            font-weight: 500;
+            height: 52px;
+            line-height: 50px;
+            margin: 0 auto;
+            text-align: center;
+            width: 52px;
+        }
+        
+        .day.past-day .day-number {
+            color: var(--gray);
+            font-weight: 300;
+        }
+        
+        .day.today .day-number {
+            color: var(--white);
+            background: radial-gradient(circle at center, var(--red) 25px, var(--white) 26px);
+            font-weight: 700;
+        }
+        
+        .event {
+            height: 24px;
+            max-width: 100%;
+            overflow: hidden;
+            text-align: left;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            width: 126px;
+        }
+        
+        .day-events {
+            height: {{ max_events_per_day * 24 }}px;
+        }
+        
+        .event-hour {
+            color: var(--gray);
+            font-weight: 300;
+        }
+
+        .event-more {
+            font-weight: 900;
+        }
+        
+        .day.past-day .event-hour,
+        .day.past-day .event-summary {
+            color: var(--gray);
+        }
+
+        .event.important .event-summary {
+            color: var(--red);
+        }
+
+        .upcoming-days {
+            display: flex;
+            flex-direction: row;
+            margin-top: auto;
+        }
+
+        .upcoming-days-column {
+            display: flex;
+            flex-direction: column;
+            width: 50%;
+        }
+
+        .upcoming-days-header {
+            margin-bottom: 20px;
+            font-size: 2rem;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        .upcoming-events {
+            margin: 20px;
+            min-height: 90px;
+        }
+
+        .upcoming-events .event {
+            font-size: 1.25rem;
+            height: 30px;
+            width: 100%;
+        }
+
+        .upcoming-events .no-events {
+            color: var(--gray);
+            font-style: italic;
+            font-weight: 300;
+            text-align: center;
+        }
+
+        .upcoming-weather {
+            display: flex;
+            flex-direction: row;
+            margin-top: auto;
+            margin-bottom: 20px;
+            padding: 20px 20px 0 20px;
+        }
+
+        .weather-container {
+            display: flex;
+            flex: 1 1 25%;
+            flex-direction: column;
+        }
+
+        .weather-image {
+            align-items: center;
+            display: flex;
+            height: 64px;
+            justify-content: center;
+            margin: auto;
+            width: 64px;
+            text-align: center;
+        }
+
+        .weather-image img {
+            height: 64px;
+            width: 64px;
+        }
+
+        .weather-hour {
+            color: var(--gray);
+            font-size: 1rem;
+            font-weight: 300;
+            text-align: center;
+        }
+
+        .weather-hour-temperature {
+            font-size: 1.25rem;
+            font-weight: 700;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="calendar-container">
+        <div class="today-header">
+            <span class="today-day-number">{{ today_day_number }}</span>
+            <span class="month">{{ i18n.months[month_number-1] }}</span>
+        </div>
+        {% if battery_icon %}
+            <div class="battery">
+                <img src="../static/images/battery-{{ battery_icon }}.svg" fill="dark-grey" />
+            </div>
+        {% endif %}
+        <div class="days-container">
+            {% for day in i18n.week_days %}
+                <div class="day">
+                    <div class="day-name">
+                        {{ day }}
+                    </div>
+                </div>
+            {% endfor %}
+            {% for date, day in calendar.days.items() %}
+                <div class="day {% if day.datetime < today %}past-day{% endif %} {% if day.datetime == today %}today{% endif %}">
+                    <div class="day-number">
+                        {{ day.number }}
+                    </div>
+                    <div class="day-events">
+                        {% set more_events = day.events|length - max_events_per_day %}
+                        {% if more_events > 0 %}
+                            {% set events = day.events[0:max_events_per_day-1] %}
+                        {% else %}
+                            {% set events = day.events %}
+                        {% endif %}
+                        {% for event in events %}
+                            <div class="event {% if event.important %}important{% endif %}">
+                                {% if not event.all_day %}<span class="event-hour">{{ event.start_date.strftime('%H:%M') }}</span>{% endif %}
+                                <span class="event-summary">{{ event.summary }}</span>
+                            </div>
+                        {% endfor %}
+                        {% if more_events > 0 %}
+                            <div class="event">
+                                ...<span class="event-more">+{{ more_events + 1 }}</span>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        <div class="upcoming-days">
+            {% for index, upcoming_day in upcoming_days %}
+                <div class="upcoming-days-column">
+                    <div class="upcoming-days-header">{{ i18n.upcoming_days[index] }}</div>
+                    <div class="upcoming-events">
+                        {% for event in upcoming_day.events %}
+                            <div class="event {% if event.important %}important{% endif %}">
+                                {% if not event.all_day %}<span class="event-hour">{{ event.start_date.strftime('%H:%M') }}</span>{% endif %}
+                                <span class="event-summary">{{ event.summary }}</span>
+                            </div>
+                        {% endfor %}
+                        {% if upcoming_day.events|length == 0 %}
+                            <div class="no-events">{{ i18n.no_events }}</div>
+                        {% endif %}
+                    </div>
+                    {% if weather_forecast %}
+                        <div class="upcoming-weather">
+                            {% for hour in weather_forecast[index].hours %}
+                                <div class="weather-container">
+                                    <div class="weather-image">
+                                        <img src="../static/images/weather/{{ hour.icon }}" />
+                                    </div>
+                                    <div class="weather-hour">{{ hour.hour }}</div>
+                                    <div class="weather-hour-temperature">{{ hour.temperature }}°C</div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html>

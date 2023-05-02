@@ -39,21 +39,13 @@ sudo raspi-config
 
 ```bash
 sudo apt update
-sudo apt-get install python3-pip
-sudo apt-get install chromium-chromedriver
-sudo apt-get install libopenjp2-7-dev
-pip3 install --upgrade google-api-python-client google-auth-httplib2 google-auth-oauthlib
-pip3 install pytz
-pip3 install selenium
-pip3 install Pillow
+sudo apt-get install python3-pip chromium-chromedriver libopenjp2-7-dev python3-pil wiringpi
+pip3 install -r requirements.txt
 ```
 
 4. Run the following commands in the RPi Terminal to install the libraries needed to drive the E-Ink display. See [this page](https://www.waveshare.com/wiki/12.48inch_e-Paper_Module) for more details.
 ```bash
-sudo apt-get install python3-pil
-sudo pip3 install RPi.GPIO
-sudo pip3 install spidev
-sudo apt-get install wiringpi
+sudo pip3 install RPi.GPIO spidev
 ```
 
 5. Run the following commands in the RPi Terminal to install the web interface for PiSugar2 display. See [this page](https://github.com/PiSugar/PiSugar/wiki/PiSugar2) for more details. After running the command, you would be able to access the web interface at http://your_raspberry_ip:8421 in your browser. From there you should be able to specify when you wish to schedule the PiSugar2 boot up your RPi.
