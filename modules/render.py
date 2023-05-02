@@ -42,8 +42,9 @@ class TemplateRenderer:
             for j in range(red_image.size[1]):
                 if red_pixels[i, j][0] <= red_pixels[i, j][1] and red_pixels[i, j][0] <= red_pixels[i, j][2]:
                     red_pixels[i, j] = (255, 255, 255)
-
-                elif black_pixels[i, j][0] > black_pixels[i, j][1] and black_pixels[i, j][0] > black_pixels[i, j][2]:
+                else:
+                    red_pixels[i, j] = (0, 0, 0)
+                if black_pixels[i, j][0] > black_pixels[i, j][1] and black_pixels[i, j][0] > black_pixels[i, j][2]:
                     black_pixels[i, j] = (255, 255, 255)
 
         red_image = red_image.rotate(self.config.rotate, expand=True)
