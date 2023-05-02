@@ -39,6 +39,6 @@ elif cmd == "weather":
     for forecast in Weather(config).forecast:
         print(forecast.day)
         for hour in forecast.hours:
-            print(f"  {hour.hour}: {hour.condition.value} - {hour.temperature}°C")
+            print(f"  {hour.hour}: {hour.condition} - {hour.temperature}°C")
 else:
     print(f"Unknown '{cmd}' command")

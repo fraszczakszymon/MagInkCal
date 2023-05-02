@@ -1,5 +1,4 @@
-from functools import cached_property
-
+import functools
 import requests
 
 from datetime import datetime, timedelta
@@ -38,15 +37,18 @@ class Calendar:
         self.timezone = timezone(config.timezone)
         self.days = self._get_empty_days_range()
 
-    @cached_property
+    @property
+    @functools.lru_cache()
     def today(self) -> datetime:
         return datetime.today().astimezone(self.timezone).replace(hour=0, minute=0, second=0, microsecond=0)
 
-    @cached_property
+    @property
+    @functools.lru_cache()
     def start_date(self) -> datetime:
         return self.today - timedelta(days=self.today.weekday())
 
-    @cached_property
+    @property
+    @functools.lru_cache()
     def end_date(self) -> datetime:
         return self.start_date + timedelta(weeks=self.config.number_of_weeks)
 

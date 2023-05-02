@@ -1,8 +1,8 @@
+import functools
 import json
 import os
 import pathlib
 
-from functools import cached_property
 from pydantic import BaseModel
 from typing import List, Optional
 
@@ -56,7 +56,8 @@ class Config(BaseModel):
 
 
 class ConfigLoader:
-    @cached_property
+    @property
+    @functools.lru_cache()
     def config(self) -> Config:
         path = f"{pathlib.Path(__file__).parent.parent.absolute()}/config.json"
         assert os.path.exists(path), "config.json does not exist"

@@ -1,7 +1,7 @@
+import functools
 import logging
 import subprocess
 
-from functools import cached_property
 from pydantic import BaseModel
 
 
@@ -14,7 +14,8 @@ class Power:
     def __init__(self):
         self.logger = logging.getLogger('maginkcal')
 
-    @cached_property
+    @property
+    @functools.lru_cache()
     def battery_status(self) -> BatteryStatus:
         return BatteryStatus(
             level=self._get_battery_level(),

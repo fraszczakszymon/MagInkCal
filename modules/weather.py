@@ -1,9 +1,8 @@
+import functools
 import json
-from enum import Enum
-
 import requests
 
-from functools import cached_property
+from enum import Enum
 from modules.config import Config
 from pydantic import BaseModel
 from pytz import timezone
@@ -118,16 +117,16 @@ class ForecastConditionEnum(Enum):
 
 
 class ForecastHour(BaseModel):
-    condition: ForecastConditionEnum
+    condition: str
     hour: str
     is_day: bool
     temperature: int
 
     @property
     def icon(self):
-        night_condition = f"{self.condition.value} night"
-        icon_index = ICONS_MAP[self.condition.value]
-        if not self.is_day and f"{self.condition.value} night" in ICONS_MAP:
+        night_condition = f"{self.condition} night"
+        icon_index = ICONS_MAP[self.condition]
+        if not self.is_day and f"{self.condition} night" in ICONS_MAP:
             icon_index = ICONS_MAP[night_condition]
         return f"001lighticons-{icon_index}.png"
 
@@ -169,7 +168,8 @@ class Weather:
         self.number_of_forecast_days = len(self.config.i18n.upcoming_days)
         self.timezone = timezone(config.timezone)
 
-    @cached_property
+    @property
+    @functools.lru_cache()
     def forecast(self) -> List[ForecastDay]:
         parameters = [
             f"key={self.config.weather.api_key}",
