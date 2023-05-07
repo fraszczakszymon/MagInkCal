@@ -1,4 +1,9 @@
 config.json
+build/*
+!build/.gitkeep
+logs/*
+!logs/.gitkeep
+
 
 #intellij config
 .idea/
@@ -16,7 +21,6 @@ __pycache__/
 
 # Distribution / packaging
 .Python
-build/
 develop-eggs/
 dist/
 downloads/

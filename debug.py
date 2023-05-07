@@ -1,14 +1,21 @@
 #!/usr/bin/env python3
+import logging
 import sys
 
 from modules.config import ConfigLoader
 from modules.events import Calendar
+from modules.logger import log_setup
 from modules.power import Power
 from modules.render import TemplateRenderer
 from modules.weather import Weather
 
 assert len(sys.argv) == 2, f"Expected 1 argument, {len(sys.argv) - 1} given"
 cmd = sys.argv[1]
+
+log_setup("debug.log")
+
+logger = logging.getLogger('debug')
+logger.info(f"Debug {cmd}")
 
 config = ConfigLoader().config
 

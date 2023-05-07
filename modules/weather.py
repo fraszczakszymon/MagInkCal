@@ -1,5 +1,7 @@
 import functools
 import json
+import logging
+
 import requests
 
 from enum import Enum
@@ -7,6 +9,9 @@ from modules.config import Config
 from pydantic import BaseModel
 from pytz import timezone
 from typing import List
+
+
+logger = logging.getLogger('weather')
 
 
 FORECAST_HOURS = ("06:00", "12:00", "15:00", "18:00", "00:00")
@@ -207,5 +212,7 @@ class Weather:
                     forecast_hours = []
             if len(forecast_days) == self.number_of_forecast_days:
                 break
+
+        logger.info(f"Weather forecast for {self.number_of_forecast_days} day(s) ready")
 
         return forecast_days

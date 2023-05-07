@@ -1,10 +1,14 @@
 import functools
 import json
+import logging
 import os
 import pathlib
 
 from pydantic import BaseModel
 from typing import List, Optional
+
+
+logger = logging.getLogger('config')
 
 
 class I18nConfig(BaseModel):
@@ -63,4 +67,5 @@ class ConfigLoader:
         assert os.path.exists(path), "config.json does not exist"
         with open(path) as file:
             config_data = json.load(file)
+            logger.info('Config file loaded')
         return Config(**config_data)

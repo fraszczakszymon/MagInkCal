@@ -1,4 +1,5 @@
 import functools
+import logging
 import requests
 
 from datetime import datetime, timedelta
@@ -11,6 +12,9 @@ from typing import Dict, List
 
 
 SUPPORTED_RRULE_PROPERTIES = ("RRULE", "RDATE", "EXRULE", "EXDATE", "DTSTART")
+
+
+logger = logging.getLogger('events')
 
 
 class Event(BaseModel):
@@ -53,15 +57,18 @@ class Calendar:
         return self.start_date + timedelta(weeks=self.config.number_of_weeks)
 
     def load_events(self) -> None:
+        logger.info(f"Fetching events from {len(self.config.calendars)} calendars")
+        number_of_events = 0
         for calendar in self.config.calendars:
             ics_calendar = IcsCalendar(requests.get(calendar.url).text)
             for event in ics_calendar.events:
                 event_description = event.serialize()
                 if "RRULE" in event_description:
-                    self._process_recurring_event(event, event_description, calendar.important)
+                    number_of_events += self._process_recurring_event(event, event_description, calendar.important)
                 elif self._starts_within_range(event.begin.datetime) or self._end_within_range(event.end.datetime):
-                    self._process_single_event(event, calendar.important)
+                    number_of_events += self._process_single_event(event, calendar.important)
         self._sort_events()
+        logger.info(f"Fetched {number_of_events} events to display")
 
     def _starts_within_range(self, start_datetime: datetime) -> bool:
         return self.start_date <= start_datetime < self.end_date
@@ -82,7 +89,7 @@ class Calendar:
             date = date + timedelta(days=1)
         return days
 
-    def _process_single_event(self, ics_event: IcsEvent, important=False) -> None:
+    def _process_single_event(self, ics_event: IcsEvent, important=False) -> int:
         self._add_event(
             Event(
                 all_day=ics_event.all_day,
@@ -92,8 +99,10 @@ class Calendar:
                 summary=ics_event.name,
             )
         )
+        return 1
 
-    def _process_recurring_event(self, ics_event: IcsEvent, event_description: str, important=False) -> None:
+    def _process_recurring_event(self, ics_event: IcsEvent, event_description: str, important=False) -> int:
+        added_events = 0
         event_duration = ics_event.end.datetime - ics_event.begin.datetime
         rules = "\n".join([rule for rule in event_description.split("\n") if rule.startswith(SUPPORTED_RRULE_PROPERTIES)])
         for next_event_start_datetime in rrule.rrulestr(rules):
@@ -113,6 +122,8 @@ class Calendar:
                         summary=ics_event.name,
                     )
                 )
+                added_events += 1
+        return added_events
 
     def _add_event(self, event: Event) -> None:
         date_keys = []

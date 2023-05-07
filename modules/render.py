@@ -1,3 +1,4 @@
+import logging
 import pathlib
 
 from jinja2 import Environment, FileSystemLoader
@@ -11,6 +12,9 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from time import sleep
 from typing import List
+
+
+logger = logging.getLogger('render')
 
 
 class TemplateRenderer:
@@ -33,6 +37,8 @@ class TemplateRenderer:
         driver.get_screenshot_as_file(image_path)
         driver.quit()
 
+        logger.info("Screenshot ready")
+
         red_image = Image.open(image_path)
         red_pixels = red_image.load()
         black_image = Image.open(image_path)
@@ -54,6 +60,8 @@ class TemplateRenderer:
         # red_image.save(red_file)
         # black_file = open(f"{self.workdir}/black.png", "wb")
         # black_image.save(black_file)
+
+        logger.info("Image file rendered")
 
         return black_image, red_image
 
@@ -86,6 +94,8 @@ class TemplateRenderer:
         output_file = open(f"{self.workdir}/calendar.html", "w")
         output_file.write(html)
         output_file.close()
+
+        logger.info("HTML file rendered")
 
     def _get_battery_icon_name(self, battery_level: float) -> str:
         if battery_level > 80:
