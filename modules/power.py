@@ -28,7 +28,7 @@ class Power:
     def sync_time(self) -> None:
         # To sync PiSugar RTC with current time
         try:
-            ps = subprocess.Popen(('echo', 'rtc_rtc2pi'), stdout=subprocess.PIPE)
+            ps = subprocess.Popen(('echo', 'rtc_pi2rtc'), stdout=subprocess.PIPE)
             subprocess.check_output(('nc', '-q', '0', '127.0.0.1', '8423'), stdin=ps.stdout)
             ps.wait()
         except subprocess.CalledProcessError:
