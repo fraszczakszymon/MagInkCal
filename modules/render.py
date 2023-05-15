@@ -77,9 +77,13 @@ class TemplateRenderer:
             if len(upcoming_days) == len(self.config.i18n.upcoming_days):
                 break
 
+        battery_icon = None
+        if battery_status and battery_status.level is not None:
+            battery_icon = self._get_battery_icon_name(battery_status.level)
+
         html = template.render(
             calendar=calendar,
-            battery_icon=self._get_battery_icon_name(battery_status.level) if battery_status else None,
+            battery_icon=battery_icon,
             height=self.config.image_height,
             i18n=self.config.i18n,
             max_events_per_day=self.config.max_events_per_day,

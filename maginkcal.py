@@ -28,6 +28,8 @@ def main():
 
     renderer = TemplateRenderer(config)
 
+    battery_status = power.battery_status
+
     black_image, red_image = renderer.render(calendar, weather_forecast=weather_forecast, battery_status=battery_status)
 
     display_service = Display(config.screen_width, config.screen_height)

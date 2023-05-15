@@ -1,6 +1,6 @@
-import functools
 import logging
 import subprocess
+from typing import Optional
 
 from pydantic import BaseModel
 
@@ -9,13 +9,12 @@ logger = logging.getLogger('power')
 
 
 class BatteryStatus(BaseModel):
-    level: float
+    level: Optional[float]
     is_charging: bool
 
 
 class Power:
     @property
-    @functools.lru_cache()
     def battery_status(self) -> BatteryStatus:
         status = BatteryStatus(
             level=self._get_battery_level(),
@@ -34,7 +33,7 @@ class Power:
         except subprocess.CalledProcessError:
             logger.warning('Invalid time sync command')
 
-    def _get_battery_level(self) -> float:
+    def _get_battery_level(self) -> Optional[float]:
         try:
             ps = subprocess.Popen(('echo', 'get battery'), stdout=subprocess.PIPE)
             result = subprocess.check_output(('nc', '-q', '0', '127.0.0.1', '8423'), stdin=ps.stdout)
@@ -43,8 +42,7 @@ class Power:
             return float(value)
         except (ValueError, subprocess.CalledProcessError):
             logger.warning('Invalid battery output')
-
-        return 0.0
+            return None
 
     def _is_charging(self) -> bool:
         try:
