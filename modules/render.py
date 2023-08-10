@@ -69,7 +69,7 @@ class TemplateRenderer:
         environment = Environment(loader=FileSystemLoader(templates_path))
         template = environment.get_template("calendar_template.jinja2")
 
-        battery_icon = "full"
+        battery_icon = None
         if battery_status and battery_status.level is not None:
             battery_icon = self._get_battery_icon_name(battery_status.level)
 
