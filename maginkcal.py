@@ -5,7 +5,7 @@ import os
 
 from display.display import Display
 from modules.config import ConfigLoader
-from modules.events import Calendar
+from modules.calendar import Calendar
 from modules.logger import log_setup
 from modules.power import Power
 from modules.render import TemplateRenderer
