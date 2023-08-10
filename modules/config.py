@@ -58,6 +58,7 @@ class Calendar(BaseModel):
 
 class Config(BaseModel):
     auto_power_off = True
+    auto_power_off_while_charging = False
     display_battery = True
     calendars: List[Calendar]
     detailed_weeks = 0

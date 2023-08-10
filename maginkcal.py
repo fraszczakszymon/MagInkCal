@@ -43,7 +43,7 @@ def main():
 
     logger.info("Completed daily calendar update")
 
-    if config.auto_power_off and not battery_status.is_charging:
+    if config.auto_power_off and (config.auto_power_off_while_charging or not battery_status.is_charging):
         logger.info("Power off")
         os.system("sudo shutdown -h now")
 

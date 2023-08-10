@@ -1,5 +1,6 @@
 {
   "auto_power_off": true,
+  "auto_power_off_while_charging": false,
   "calendars": [
     {
       "url": "https://example.com/calendar.ics",
