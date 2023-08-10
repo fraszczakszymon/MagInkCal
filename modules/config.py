@@ -12,7 +12,21 @@ logger = logging.getLogger('config')
 
 
 class I18nConfig(BaseModel):
-    months = [
+    header_months = [
+        "January",
+        "February",
+        "March",
+        "April",
+        "May",
+        "June",
+        "July",
+        "August",
+        "September",
+        "October",
+        "November",
+        "December"
+    ]
+    preview_months = [
         "January",
         "February",
         "March",
@@ -27,7 +41,6 @@ class I18nConfig(BaseModel):
         "December"
     ]
     no_events = "No events"
-    upcoming_days = ["Today", "Tomorrow"]
     week_days = ["M", "T", "W", "T", "F", "S", "S"]
 
 
@@ -47,10 +60,12 @@ class Config(BaseModel):
     auto_power_off = True
     display_battery = True
     calendars: List[Calendar]
+    detailed_weeks = 0
     i18n: I18nConfig
-    image_width = 984
-    image_height = 1304
+    image_width = 1304
+    image_height = 984
     max_events_per_day = 5
+    number_of_months = 0
     number_of_weeks = 3
     rotate = 0
     screen_width = 1304
@@ -68,4 +83,9 @@ class ConfigLoader:
         with open(path) as file:
             config_data = json.load(file)
             logger.info('Config file loaded')
-        return Config(**config_data)
+        config = Config(**config_data)
+
+        assert len(config.calendars) > 0, "No calendars configured"
+        assert config.number_of_months <= 2, "Maximum number of months is 2"
+
+        return config

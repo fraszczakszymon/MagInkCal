@@ -170,12 +170,12 @@ class WeatherApiForecastResponse(BaseModel):
 class Weather:
     def __init__(self, config: Config):
         self.config = config
-        self.number_of_forecast_days = len(self.config.i18n.upcoming_days)
+        self.number_of_forecast_days = 1
         self.timezone = timezone(config.timezone)
 
     @property
     @functools.lru_cache()
-    def forecast(self) -> List[ForecastDay]:
+    def forecast(self) -> ForecastDay:
         parameters = [
             f"key={self.config.weather.api_key}",
             f"q={self.config.weather.latitude},{self.config.weather.longitude}",
@@ -215,4 +215,4 @@ class Weather:
 
         logger.info(f"Weather forecast for {self.number_of_forecast_days} day(s) ready")
 
-        return forecast_days
+        return forecast_days[0]

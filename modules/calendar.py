@@ -32,6 +32,44 @@ class Day(BaseModel):
     number: int
 
 
+class MonthDay(BaseModel):
+    datetime: datetime
+    is_current_month: bool
+    is_today: bool
+    number: int
+
+
+class Month(BaseModel):
+    number: int
+    year: int
+    days: List[MonthDay] = []
+
+
+def get_months_preview(number_of_months) -> List[Month]:
+    for i in range(number_of_months):
+        yield _get_month_preview(i)
+
+
+def _get_month_preview(month_offset: int) -> Month:
+    today = datetime.today()
+    first_day_of_month = today.replace(day=1, month=today.month + month_offset)
+    day = first_day_of_month - timedelta(days=first_day_of_month.weekday())
+    month = Month(number=first_day_of_month.month, year=first_day_of_month.year)
+    while True:
+        month.days.append(
+            MonthDay(
+                datetime=day,
+                is_current_month=day.month == first_day_of_month.month,
+                is_today=day == today,
+                number=int(day.strftime("%d")),
+            )
+        )
+        day = day + timedelta(days=1)
+        if day.month != first_day_of_month.month and len(month.days) % 7 == 0:
+            break
+    return month
+
+
 class Calendar:
     config: Config
     days: Dict[str, Day]

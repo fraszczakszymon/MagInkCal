@@ -2,8 +2,8 @@
 import logging
 import sys
 
+from modules.calendar import Calendar, get_months_preview
 from modules.config import ConfigLoader
-from modules.events import Calendar
 from modules.logger import log_setup
 from modules.power import Power
 from modules.render import TemplateRenderer
@@ -31,6 +31,11 @@ elif cmd == "events":
                 print(f"  {event.summary}")
             else:
                 print(f"  {event.start_date.strftime('%H:%M')} {event.summary}")
+elif cmd == "months":
+    for month in get_months_preview(2):
+        print(f"{config.i18n.preview_months[month.number - 1]} {month.year}")
+        for index, day in enumerate(month.days):
+            print(f"  {day.number}", end="\n" if index % 7 == 6 else " ")
 elif cmd == "battery":
     power = Power()
     print(power.battery_status)

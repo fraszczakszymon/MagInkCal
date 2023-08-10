@@ -8,7 +8,21 @@
   ],
   "display_battery": true,
   "i18n": {
-    "months": [
+    "header_months": [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December"
+    ],
+    "preview_months": [
       "January",
       "February",
       "March",
@@ -23,12 +37,12 @@
       "December"
     ],
     "no_events": "No events",
-    "upcoming_days": ["Today", "Tomorrow"],
     "week_days": ["M", "T", "W", "T", "F", "S", "S"]
   },
-  "image_width": 984,
-  "image_height": 1304,
+  "image_width": 1304,
+  "image_height": 984,
   "max_events_per_day": 5,
+  "number_of_months": 2,
   "number_of_weeks": 3,
   "rotate": 0,
   "screen_width": 1304,

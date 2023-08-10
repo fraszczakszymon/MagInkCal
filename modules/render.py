@@ -2,8 +2,8 @@ import logging
 import pathlib
 
 from jinja2 import Environment, FileSystemLoader
+from modules.calendar import Calendar, get_months_preview
 from modules.config import Config
-from modules.events import Calendar
 from modules.power import BatteryStatus
 from modules.weather import ForecastDay
 from PIL import Image
@@ -11,7 +11,6 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from time import sleep
-from typing import List
 
 
 logger = logging.getLogger('render')
@@ -22,7 +21,7 @@ class TemplateRenderer:
         self.config = config
         self.workdir = f"{pathlib.Path(__file__).parent.parent.absolute()}/build"
 
-    def render(self, calendar: Calendar, battery_status: BatteryStatus = None, weather_forecast: List[ForecastDay] = None):
+    def render(self, calendar: Calendar, battery_status: BatteryStatus = None, weather_forecast: ForecastDay = None):
         self._build_html(calendar, battery_status, weather_forecast)
 
         options = Options()
@@ -65,33 +64,27 @@ class TemplateRenderer:
 
         return black_image, red_image
 
-    def _build_html(self, calendar: Calendar, battery_status: BatteryStatus = None, weather_forecast: List[ForecastDay] = None):
+    def _build_html(self, calendar: Calendar, battery_status: BatteryStatus = None, weather_forecast: ForecastDay = None):
         templates_path = f"{pathlib.Path(__file__).parent.parent.absolute()}/template"
         environment = Environment(loader=FileSystemLoader(templates_path))
         template = environment.get_template("calendar_template.jinja2")
 
-        upcoming_days = []
-        for date, day in calendar.days.items():
-            if day.datetime >= calendar.today:
-                upcoming_days.append(day)
-            if len(upcoming_days) == len(self.config.i18n.upcoming_days):
-                break
-
-        battery_icon = None
+        battery_icon = "full"
         if battery_status and battery_status.level is not None:
             battery_icon = self._get_battery_icon_name(battery_status.level)
 
         html = template.render(
             calendar=calendar,
             battery_icon=battery_icon,
+            detailed_weeks=self.config.detailed_weeks,
             height=self.config.image_height,
             i18n=self.config.i18n,
             max_events_per_day=self.config.max_events_per_day,
             month_number=int(calendar.today.strftime("%-m")),
+            preview_months=get_months_preview(self.config.number_of_months),
             width=self.config.image_width,
             today=calendar.today,
             today_day_number=int(calendar.today.strftime("%-d")),
-            upcoming_days=enumerate(upcoming_days),
             weather_forecast=weather_forecast,
         )
 

@@ -1,5 +1,6 @@
 <html>
 <head>
+    <meta charset="utf-8">
     <style>
         @font-face {
           font-family: "Lato";
@@ -95,9 +96,22 @@
             position: relative;
             width: {{ width }}px;
         }
+
+        .header {
+            display: flex;
+        }
         
         .today-header {
+            display: flex;
+            flex-direction: column;
             padding: 20px;
+            width: 400px;
+        }
+
+        .today-label {
+            display: flex;
+            flex-direction: row;
+            margin-left: 6px;
         }
         
         .today-header .today-day-number {
@@ -109,12 +123,67 @@
         .today-header .month {
             font-size: 2rem;
             margin-left: 5px;
+            padding-top: 16px;
+        }
+
+        .preview-months-container {
+            display: flex;
+            flex-direction: row;
+            margin-left: auto;
+            margin-right: 40px;
+            padding: 15px;
+        }
+
+        .preview-month {
+            display: flex;
+            flex-direction: row;
+            height: 100%;
+            margin-left: 40px;
+            width: 300px;
+        }
+
+        .preview-month .month-name {
+            writing-mode: vertical-lr;
+            transform: rotate(180deg);
+            margin-bottom: 6px;
+            margin-right: 5px;
+        }
+
+        .preview-month .month-days-container {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            min-height: 160px;
+        }
+
+        .preview-month .month-day {
+            color: var(--gray);
+            display: flex;
+            flex: 1 1 36px;
+            flex-direction: column;
+            height: 28px;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .preview-month .month-day.current-month-day {
+            color: var(--black);
+        }
+
+        .preview-month .month-day.today {
+            color: var(--white);
+            background: radial-gradient(circle at center, var(--red) 13px, var(--white) 13px);
+            font-weight: 700;
+        }
+
+        .preview-month .day-name {
+            font-size: 0.9rem;
         }
         
         .battery {
             position: absolute;
-            right: 20px;
-            top: 20px;
+            right: 16px;
+            top: 15px;
         }
         
         .battery img {
@@ -124,16 +193,24 @@
         .days-container {
             display: flex;
             flex-wrap: wrap;
-            width: 944px;
-            margin: 0 20px;
+            width: {{ width - 40 }}px;
+            margin: 20px 20px 0 20px;
         }
         
         .day {
             display: flex;
-            flex: 1 1 126px;
+            flex: 1 1 {{ (width - 40 - 60) / 7 - 20 }}px;
             flex-direction: column;
-            margin: 10px 0 10px 10px;
+            padding: 10px;
             text-align: center;
+        }
+
+        .day:nth-child(n+7) {
+            background: linear-gradient(90deg, #fff 99%, #000 100%);
+        }
+
+        .day:nth-child(7n) {
+            background: none;
         }
         
         .day:nth-child(7n+1) {
@@ -143,18 +220,24 @@
         .day .day-name {
             color: var(--gray);
             font-size: 1.5rem;
-            font-weight: 500;
+            font-weight: 300;
             margin: 0 auto;
         }
         
         .day .day-number {
-            font-size: 2rem;
+            font-size: 1.3rem;
             font-weight: 500;
-            height: 52px;
-            line-height: 50px;
+            height: 42px;
+            line-height: 40px;
             margin: 0 auto;
             text-align: center;
             width: 52px;
+        }
+
+        .day.detailed-week-day .day-number {
+            font-size: 2rem;
+            height: 52px;
+            line-height: 50px;
         }
         
         .day.past-day .day-number {
@@ -175,7 +258,7 @@
             text-align: left;
             text-overflow: ellipsis;
             white-space: nowrap;
-            width: 126px;
+            width: {{ (width - 40 - 60) / 7 - 20 }}px;
         }
 
         .event.important {
@@ -185,9 +268,9 @@
         .day.past-day .event.important {
             color: var(--gray);
         }
-        
+
         .day-events {
-            height: {{ max_events_per_day * 24 }}px;
+            min-height: {{ max_events_per_day * 24 }}px;
         }
         
         .event-hour {
@@ -212,48 +295,16 @@
             color: var(--gray);
         }
 
-        .upcoming-days {
+        .detailed-week-day .event {
+            height: 28px;
+            font-size: 1.2rem;
+        }
+
+        .weather-forecast {
             display: flex;
             flex-direction: row;
             margin-top: auto;
-        }
-
-        .upcoming-days-column {
-            display: flex;
-            flex-direction: column;
-            width: 50%;
-        }
-
-        .upcoming-days-header {
-            font-size: 1rem;
-            font-weight: 500;
-            text-align: center;
-        }
-
-        .upcoming-events {
-            margin: 20px;
-            min-height: 90px;
-        }
-
-        .upcoming-events .event {
-            font-size: 1.25rem;
-            height: 30px;
-            width: 100%;
-        }
-
-        .upcoming-events .no-events {
-            color: var(--gray);
-            font-style: italic;
-            font-weight: 500;
-            text-align: center;
-        }
-
-        .upcoming-weather {
-            display: flex;
-            flex-direction: row;
-            margin-top: auto;
-            margin-bottom: 20px;
-            padding: 10px 20px 0 20px;
+            margin-bottom: 0;
         }
 
         .weather-container {
@@ -293,9 +344,45 @@
 </head>
 <body>
     <div class="calendar-container">
-        <div class="today-header">
-            <span class="today-day-number">{{ today_day_number }}</span>
-            <span class="month">{{ i18n.months[month_number-1] }}</span>
+        <div class="header">
+            <div class="today-header">
+                <div class="today-label">
+                    <div class="today-day-number">{{ today_day_number }}</div>
+                    <div class="month">{{ i18n.header_months[month_number-1] }}</div>
+                </div>
+                {% if weather_forecast %}
+                    <div class="weather-forecast">
+                        {% for hour in weather_forecast.hours %}
+                            <div class="weather-container">
+                                <div class="weather-image">
+                                    <img src="../static/images/weather/{{ hour.icon }}" />
+                                </div>
+                                <div class="weather-hour">{{ hour.hour }}</div>
+                                <div class="weather-hour-temperature">{{ hour.temperature }}°C</div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            <div class="preview-months-container">
+                {% for month in preview_months %}
+                    <div class="preview-month">
+                        <div class="month-name">
+                            {{ i18n.preview_months[month.number - 1] }}&nbsp;{{ month.year }}
+                        </div>
+                        <div class="month-days-container">
+                            {% for day in i18n.week_days %}
+                                <div class="month-day day-name">
+                                    {{ day }}
+                                </div>
+                            {% endfor %}
+                            {% for day in month.days %}
+                                <div class="month-day {% if day.is_current_month %}current-month-day{% endif %} {% if day.is_today %}today{% endif %}">{{ day.number }}</div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
         </div>
         {% if battery_icon %}
             <div class="battery">
@@ -311,13 +398,15 @@
                 </div>
             {% endfor %}
             {% for date, day in calendar.days.items() %}
-                <div class="day {% if day.datetime < today %}past-day{% endif %} {% if day.datetime == today %}today{% endif %}">
+                {% set week = (((loop.index - 1) / 7)|int) + 1 %}
+                {% set more_events = day.events|length - max_events_per_day %}
+                {% set is_detailed_week = week <= detailed_weeks %}
+                <div class="day {% if day.datetime < today %}past-day{% endif %} {% if day.datetime == today %}today{% endif %} {% if is_detailed_week %}detailed-week-day{% endif %}">
                     <div class="day-number">
                         {{ day.number }}
                     </div>
                     <div class="day-events">
-                        {% set more_events = day.events|length - max_events_per_day %}
-                        {% if more_events > 0 %}
+                        {% if not is_detailed_week and more_events > 0 %}
                             {% set events = day.events[0:max_events_per_day-1] %}
                         {% else %}
                             {% set events = day.events %}
@@ -328,43 +417,12 @@
                                 <span class="event-summary">{{ event.summary }}</span>
                             </div>
                         {% endfor %}
-                        {% if more_events > 0 %}
+                        {% if not is_detailed_week and more_events > 0 %}
                             <div class="event">
                                 ...<span class="event-more">+{{ more_events + 1 }}</span>
                             </div>
                         {% endif %}
                     </div>
-                </div>
-            {% endfor %}
-        </div>
-        <div class="upcoming-days">
-            {% for index, upcoming_day in upcoming_days %}
-                <div class="upcoming-days-column">
-                    <div class="upcoming-days-header">{{ i18n.upcoming_days[index] }}</div>
-{#                    <div class="upcoming-events">#}
-{#                        {% for event in upcoming_day.events %}#}
-{#                            <div class="event {% if event.important %}important{% endif %}">#}
-{#                                {% if not event.all_day %}<span class="event-hour">{{ event.start_date.strftime('%H:%M') }}</span>{% endif %}#}
-{#                                <span class="event-summary">{{ event.summary }}</span>#}
-{#                            </div>#}
-{#                        {% endfor %}#}
-{#                        {% if upcoming_day.events|length == 0 %}#}
-{#                            <div class="no-events">{{ i18n.no_events }}</div>#}
-{#                        {% endif %}#}
-{#                    </div>#}
-                    {% if weather_forecast %}
-                        <div class="upcoming-weather">
-                            {% for hour in weather_forecast[index].hours %}
-                                <div class="weather-container">
-                                    <div class="weather-image">
-                                        <img src="../static/images/weather/{{ hour.icon }}" />
-                                    </div>
-                                    <div class="weather-hour">{{ hour.hour }}</div>
-                                    <div class="weather-hour-temperature">{{ hour.temperature }}°C</div>
-                                </div>
-                            {% endfor %}
-                        </div>
-                    {% endif %}
                 </div>
             {% endfor %}
         </div>
