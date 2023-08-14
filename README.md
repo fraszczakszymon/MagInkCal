@@ -24,8 +24,6 @@ Some features of the calendar:
 - Given limited space (oh why are large E-Ink screens still so expensive!) and resolution on the display, I could only show 3 events per day and an indicator (e.g. 4 more) for those not displayed 
 - The calendar always starts from the current week, and displays the next four (total 35 days). If the dates cross over to the new month, it's displayed in grey instead of black.
 
-![MagInkCal Basics](https://user-images.githubusercontent.com/5581989/134775456-d6bacaca-03c7-4357-af28-7c06aa19ed90.png)
-
 ## Setting Up Raspberry Pi Zero
 
 1. Start by flashing [Raspberrypi OS Lite](https://www.raspberrypi.org/software/operating-systems/) to a MicroSD Card. (March 2023 Edit: If you're still using the original Raspberry Pi Zero, there are [known issues](https://forums.raspberrypi.com/viewtopic.php?t=323478) between the latest RPiOS "bullseye" release and chromium-browser, which is required to run this code. As such, I would recommend that you keep to the legacy "buster" OS if you're still running this on older RPiO hardware.)
@@ -39,56 +37,55 @@ sudo raspi-config
 
 ```bash
 sudo apt update
-sudo apt-get install python3-pip chromium-chromedriver libopenjp2-7-dev python3-pil wiringpi
+sudo apt-get install git python3-pip chromium-chromedriver libopenjp2-7-dev python3-pil wiringpi
+```
+
+4. Clone this repository to `/code/MagInkCal` in your RPi and install all python dependencies.
+```bash
+mkdir ~/code && cd ~/code
+git clone https://github.com/fraszczakszymon/MagInkCal.git 
+cd MagInkCal
 pip3 install -r requirements.txt
 ```
 
-4. Run the following commands in the RPi Terminal to install the libraries needed to drive the E-Ink display. See [this page](https://www.waveshare.com/wiki/12.48inch_e-Paper_Module) for more details.
+5. Run the following commands in the RPi Terminal to install the libraries needed to drive the E-Ink display. See [this page](https://www.waveshare.com/wiki/12.48inch_e-Paper_Module) for more details.
 ```bash
 sudo pip3 install RPi.GPIO spidev
 ```
 
-5. Run the following commands in the RPi Terminal to install the web interface for PiSugar2 display. See [this page](https://github.com/PiSugar/PiSugar/wiki/PiSugar2) for more details. After running the command, you would be able to access the web interface at http://your_raspberry_ip:8421 in your browser. From there you should be able to specify when you wish to schedule the PiSugar2 boot up your RPi.
+6. Run the following commands in the RPi Terminal to install the web interface for PiSugar2 display. See [this page](https://github.com/PiSugar/PiSugar/wiki/PiSugar2) for more details. After running the command, you would be able to access the web interface at http://your_raspberry_ip:8421 in your browser. From there you should be able to specify when you wish to schedule the PiSugar2 boot up your RPi.
 ```bash
-curl http://cdn.pisugar.com/release/Pisugar-power-manager.sh | sudo bash
+curl http://cdn.pisugar.com/release/pisugar-power-manager.sh | sudo bash
 ```
 
-6. Download the over the files in this repo to a folder in your PC first. 
+7. Copy config.sample.json to config.json and adjust it to your needs.
 
-7. In order for you to access your Google Calendar events, it's necessary to first grant the access. Follow the [instructions here](https://developers.google.com/calendar/api/quickstart/python) on your PC to get the credentials.json file from your Google API. Don't worry, take your time. I'll be waiting here.
-
-8. Once done, copy the credentials.json file to the "gcal" folder in this project. Run the following command on your PC. A web browser should appear, asking you to grant access to your calendar. Once done, you should see a "token.pickle" file in your "gcal" folder.
+8. Run below command to confirm everything is set properly:
 
 ```bash
-python3 quickstart.py
+python3 debug.py events
 ```
 
-9. Copy all the files over to your RPi using your preferred means. 
-
-10. Run the following command in the RPi Terminal to open crontab.
+9. Run the following command in the RPi Terminal to open crontab.
 ```bash
 crontab -e
 ```
-11. Specifically, add the following command to crontab so that the MagInkCal Python script runs each time the RPi is booted up.
+
+10. Specifically, add the following command to crontab so that the MagInkCal Python script runs each time the RPi is booted up.
 ```bash
-@reboot cd /location/to/your/maginkcal && python3 maginkcal.py
+@reboot cd /your/location/MagInkCal && git pull origin main && python3 maginkcal.py
 ```
 
-12. That's all! Your Magic Calendar should now be refreshed at the time interval that you specified in the PiSugar2 web interface! 
-
-PS: I'm aware that the instructions above may not be complete, especially when it comes to the Python libraries to be installed, so feel free to ping me if you noticed anything missing and I'll add it to the steps above.
+11. That's all! Your Magic Calendar should now be refreshed at the time interval that you specified in the PiSugar2 web interface! 
 
 ## Acknowledgements
 - [Quattrocento Font](https://fonts.google.com/specimen/Quattrocento): Font used for the calendar display
 - [Bootstrap Calendar CSS](https://bootstrapious.com/p/bootstrap-calendar): Stylesheet that was adapted heavily for the calendar display
 - [emagra](https://github.com/emagra): For adding in new features, such as 24hr display and multiple calendar selection. 
 - [/u/aceisace](https://www.reddit.com/user/aceisace/): For the tips on E-Ink development and the [InkyCal](https://github.com/aceisace/Inkycal) repo (worth checking out even though I didn't use it for this project).   
-  
-## Contributing
-I won't be updating this code much, since it has been serving me well. Nevertheless, feel free to fork the repo and modify it for your own purpose. At the same time, check out other similar projects, such as [InkyCal](https://github.com/aceisace/Inkycal). It's much more polished and also actively developed.
 
-## Buy Me A Coffee
-If this project has helped you in any way, do buy me a coffee so I can continue to build more of such projects in the future and share them with the community!
+## Buy original creator a coffee
+This is fork. If this project has helped you in any way, do buy original creator a coffee so he can continue to build more of such projects in the future and share them with the community!
 
 <a href="https://www.buymeacoffee.com/speedygonz" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/default-orange.png" alt="Buy Me A Coffee" height="41" width="174"></a>
 

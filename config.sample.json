@@ -43,6 +43,7 @@
   "image_width": 1304,
   "image_height": 984,
   "max_events_per_day": 5,
+  "detailed_weeks": 1,
   "number_of_months": 2,
   "number_of_weeks": 3,
   "rotate": 0,

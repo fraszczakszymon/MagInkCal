@@ -48,9 +48,9 @@ elif cmd == "render":
         weather_forecast = Weather(config).forecast
     renderer.render(calendar, weather_forecast=weather_forecast)
 elif cmd == "weather":
-    for forecast in Weather(config).forecast:
-        print(forecast.day)
-        for hour in forecast.hours:
-            print(f"  {hour.hour}: {hour.condition} - {hour.temperature}°C")
+    forecast = Weather(config).forecast
+    print(forecast.day)
+    for hour in forecast.hours:
+        print(f"  {hour.hour}: {hour.condition} - {hour.temperature}°C")
 else:
     print(f"Unknown '{cmd}' command")
