@@ -16,6 +16,15 @@ from time import sleep
 logger = logging.getLogger('render')
 
 
+CALENDAR_SPACE = 717
+WEEK_HEADER_HEIGHT = 42
+WEEK_EVENT_HEIGHT = 24
+DETAILED_WEEK_HEADER_HEIGHT = 52
+DETAILED_WEEK_EVENT_HEIGHT = 28
+WEEK_MARGINS = 20
+MINIMUM_EVENTS_HEIGHT = 96
+
+
 class TemplateRenderer:
     def __init__(self, config: Config):
         self.config = config
@@ -81,6 +90,7 @@ class TemplateRenderer:
             i18n=self.config.i18n,
             max_events_per_day=self.config.max_events_per_day,
             month_number=int(calendar.today.strftime("%-m")),
+            number_of_weeks=self._calculate_maximum_number_of_weeks(calendar),
             preview_months=get_months_preview(self.config.number_of_months),
             width=self.config.image_width,
             today=calendar.today,
@@ -116,3 +126,26 @@ class TemplateRenderer:
         target_height = self.config.image_height + (current_window_size["height"] - inner_height)
 
         driver.set_window_rect(width=target_width, height=target_height)
+
+    def _calculate_maximum_number_of_weeks(self, calendar: Calendar) -> int:
+        days = list(calendar.days.values())
+        space = CALENDAR_SPACE
+        for week in range(1, self.config.number_of_weeks + 1):
+            header_height = WEEK_HEADER_HEIGHT
+            event_height = WEEK_EVENT_HEIGHT
+            maximum_number_of_events = self.config.max_events_per_day
+            if week <= self.config.detailed_weeks:
+                header_height = DETAILED_WEEK_HEADER_HEIGHT
+                event_height = DETAILED_WEEK_EVENT_HEIGHT
+                maximum_number_of_events = 999  # let it be big enough
+            week_events_height = MINIMUM_EVENTS_HEIGHT
+            week_days = days[7*week-7:7*week]
+            for day in week_days:
+                if day.events:
+                    week_events_height = max(week_events_height, min(maximum_number_of_events, len(day.events)) * event_height)
+            week_height = header_height + week_events_height + WEEK_MARGINS
+            space = space - week_height
+            if space < 0:
+                return max(1, week - 1)
+
+        return self.config.number_of_weeks
