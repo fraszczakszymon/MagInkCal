@@ -103,16 +103,13 @@ class Calendar:
                 event_description = event.serialize()
                 if "RRULE" in event_description:
                     number_of_events += self._process_recurring_event(event, event_description, calendar.important)
-                elif self._starts_within_range(event.begin.datetime) or self._end_within_range(event.end.datetime):
+                else:
                     number_of_events += self._process_single_event(event, calendar.important)
         self._sort_events()
         logger.info(f"Fetched {number_of_events} events to display")
 
-    def _starts_within_range(self, start_datetime: datetime) -> bool:
-        return self.start_date <= start_datetime < self.end_date
-
-    def _end_within_range(self, end_datetime: datetime) -> bool:
-        return self.start_date <= end_datetime < self.end_date
+    def _is_within_range(self, date: datetime) -> bool:
+        return self.start_date <= date < self.end_date
 
     def _get_empty_days_range(self) -> Dict[str, Day]:
         days = {}
@@ -128,16 +125,20 @@ class Calendar:
         return days
 
     def _process_single_event(self, ics_event: IcsEvent, important=False) -> int:
-        self._add_event(
-            Event(
-                all_day=ics_event.all_day,
-                end_date=ics_event.end.datetime.astimezone(self.timezone),
-                important=important,
-                start_date=ics_event.begin.datetime.astimezone(self.timezone),
-                summary=ics_event.name,
+        start_date = ics_event.begin.datetime.astimezone(self.timezone)
+        end_date = ics_event.end.datetime.astimezone(self.timezone)
+        if self._is_within_range(start_date) or self._is_within_range(end_date):
+            self._add_event(
+                Event(
+                    all_day=ics_event.all_day,
+                    end_date=end_date,
+                    important=important,
+                    start_date=start_date,
+                    summary=ics_event.name,
+                )
             )
-        )
-        return 1
+            return 1
+        return 0
 
     def _process_recurring_event(self, ics_event: IcsEvent, event_description: str, important=False) -> int:
         added_events = 0
@@ -150,7 +151,7 @@ class Calendar:
             next_event_end_datetime = next_event_start_datetime + event_duration
             if next_event_end_datetime < self.start_date:
                 continue
-            if self._starts_within_range(next_event_start_datetime) or self._end_within_range(next_event_end_datetime):
+            if self._is_within_range(next_event_start_datetime) or self._is_within_range(next_event_end_datetime):
                 self._add_event(
                     Event(
                         all_day=ics_event.all_day,
