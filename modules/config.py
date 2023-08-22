@@ -58,7 +58,7 @@ class Calendar(BaseModel):
 
 class Config(BaseModel):
     auto_power_off = True
-    auto_power_off_while_charging = False
+    auto_power_off_while_charging = True
     display_battery = True
     calendars: List[Calendar]
     detailed_weeks = 0
@@ -67,7 +67,7 @@ class Config(BaseModel):
     image_height = 984
     max_events_per_day = 5
     number_of_months = 0
-    number_of_weeks = 3
+    number_of_weeks = 4
     rotate = 0
     screen_width = 1304
     screen_height = 984
