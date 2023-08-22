@@ -9,6 +9,7 @@ from modules.calendar import Calendar
 from modules.logger import log_setup
 from modules.power import Power
 from modules.render import TemplateRenderer
+from modules.schedule import Scheduler
 from modules.weather import Weather
 
 
@@ -42,6 +43,9 @@ def main():
     display_service.sleep()
 
     logger.info("Completed daily calendar update")
+
+    scheduler = Scheduler(config)
+    scheduler.schedule_next_wakeup()
 
     if config.auto_power_off and (config.auto_power_off_while_charging or not battery_status.is_charging):
         logger.info("Power off")

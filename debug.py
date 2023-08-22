@@ -1,12 +1,16 @@
 #!/usr/bin/env python3
 import logging
 import sys
+from datetime import datetime
+
+from pytz import timezone
 
 from modules.calendar import Calendar, get_months_preview
 from modules.config import ConfigLoader
 from modules.logger import log_setup
 from modules.power import Power
 from modules.render import TemplateRenderer
+from modules.schedule import Scheduler
 from modules.weather import Weather
 
 assert len(sys.argv) == 2, f"Expected 1 argument, {len(sys.argv) - 1} given"
@@ -52,5 +56,17 @@ elif cmd == "weather":
     print(forecast.day)
     for hour in forecast.hours:
         print(f"  {hour.hour}: {hour.condition} - {hour.temperature}°C")
+elif cmd == "scheduler_times":
+    scheduler = Scheduler(config)
+    now = datetime.now().astimezone(timezone(config.timezone))
+    next_wakeup = scheduler.get_next_wakeup_time()
+    print(f"Current time: {now.isoformat()}")
+    if next_wakeup:
+        print(f"Configured wake up times: {', '.join(scheduler.wakeup_hours)}")
+        print(f"Next wake up time: {next_wakeup.isoformat()}")
+    else:
+        print("No wake up time configured")
+elif cmd == "scheduler":
+    Scheduler(config).schedule_next_wakeup()
 else:
     print(f"Unknown '{cmd}' command")

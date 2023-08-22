@@ -72,6 +72,7 @@ class Config(BaseModel):
     screen_width = 1304
     screen_height = 984
     timezone: str
+    wakeup_hours = ["02:00"]
     weather: Optional[WeatherConfig]
 
 

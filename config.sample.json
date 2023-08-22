@@ -50,6 +50,7 @@
   "screen_width": 1304,
   "screen_height": 984,
   "timezone": "Europe/Warsaw",
+  "wakeup_hours": ["02:00"],
   "weather": {
     "api_key": null,
     "is_enabled": false,
