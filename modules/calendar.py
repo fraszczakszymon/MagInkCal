@@ -60,7 +60,7 @@ def _get_month_preview(month_offset: int) -> Month:
             MonthDay(
                 datetime=day,
                 is_current_month=day.month == first_day_of_month.month,
-                is_today=day == today,
+                is_today=day == today and month_offset == 0,
                 number=int(day.strftime("%d")),
             )
         )
