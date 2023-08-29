@@ -8,8 +8,7 @@ from enum import Enum
 from modules.config import Config
 from pydantic import BaseModel
 from pytz import timezone
-from typing import List
-
+from typing import List, Optional
 
 logger = logging.getLogger('weather')
 
@@ -175,7 +174,7 @@ class Weather:
 
     @property
     @functools.lru_cache()
-    def forecast(self) -> ForecastDay:
+    def forecast(self) -> Optional[ForecastDay]:
         parameters = [
             f"key={self.config.weather.api_key}",
             f"q={self.config.weather.latitude},{self.config.weather.longitude}",
@@ -184,8 +183,13 @@ class Weather:
             "alerts=no",
         ]
         url = f"https://api.weatherapi.com/v1/forecast.json?{'&'.join(parameters)}"
-        result = requests.get(url)
-        data = json.loads(result.text)
+        try:
+            result = requests.get(url)
+            data = json.loads(result.text)
+        except Exception as e:
+            logger.error(f"Failed to fetch weather forecast: {e}")
+            return None
+
         weather_api_forecast = WeatherApiForecastResponse(**data)
 
         forecast_days = []

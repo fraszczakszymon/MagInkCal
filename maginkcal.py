@@ -16,7 +16,8 @@ from modules.weather import Weather
 log_setup()
 logger = logging.getLogger('MagInkCal')
 
-def main():
+
+def display_calendar():
     config = ConfigLoader().config
     power = Power()
     power.sync_time()
@@ -54,6 +55,7 @@ def main():
 
 if __name__ == "__main__":
     try:
-        main()
+        display_calendar()
     except Exception as e:
         logger.error(e)
+        os.system("sudo shutdown -h now")
