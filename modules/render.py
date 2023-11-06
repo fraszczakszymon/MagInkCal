@@ -105,13 +105,13 @@ class TemplateRenderer:
         logger.info("HTML file rendered")
 
     def _get_battery_icon_name(self, battery_level: float) -> str:
-        if battery_level > 80:
+        if battery_level > 95:
             return "full"
-        if battery_level > 60:
+        if battery_level > 85:
             return "three-quarters"
-        if battery_level > 40:
+        if battery_level > 70:
             return "half"
-        if battery_level > 20:
+        if battery_level > 50:
             return "quarter"
         return "empty"
 
