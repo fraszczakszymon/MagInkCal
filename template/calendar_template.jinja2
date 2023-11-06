@@ -414,7 +414,7 @@
                             {% endif %}
                             {% for event in events %}
                                 <div class="event {% if event.important %}important{% endif %}">
-                                    {% if not event.all_day %}<span class="event-hour">{{ event.start_date.strftime('%H:%M') }}</span>{% endif %}
+                                    {% if not event.all_day %}<span class="event-hour">{{ event.start_time }}</span>{% endif %}
                                     <span class="event-summary">{{ event.summary }}</span>
                                 </div>
                             {% endfor %}

@@ -34,7 +34,7 @@ elif cmd == "events":
             if event.all_day:
                 print(f"  {event.summary}")
             else:
-                print(f"  {event.start_date.strftime('%H:%M')} {event.summary}")
+                print(f"  {event.start_time} {event.summary}")
 elif cmd == "months":
     for month in get_months_preview(2):
         print(f"{config.i18n.preview_months[month.number - 1]} {month.year}")

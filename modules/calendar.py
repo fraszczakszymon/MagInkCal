@@ -8,8 +8,7 @@ from ics import Calendar as IcsCalendar, Event as IcsEvent
 from modules.config import Config
 from pydantic import BaseModel
 from pytz import timezone
-from typing import Dict, List
-
+from typing import Dict, List, Optional
 
 SUPPORTED_RRULE_PROPERTIES = ("RRULE", "RDATE", "EXRULE", "EXDATE", "DTSTART")
 
@@ -22,6 +21,7 @@ class Event(BaseModel):
     end_date: datetime
     important = False
     start_date: datetime
+    start_time: Optional[str] = None
     summary: str
 
 
@@ -128,12 +128,16 @@ class Calendar:
         start_date = ics_event.begin.datetime.astimezone(self.timezone)
         end_date = ics_event.end.datetime.astimezone(self.timezone)
         if self._is_within_range(start_date) or self._is_within_range(end_date):
+            start_time = None
+            if not ics_event.all_day:
+                start_time = start_date.strftime("%H:%M")
             self._add_event(
                 Event(
                     all_day=ics_event.all_day,
                     end_date=end_date,
                     important=important,
                     start_date=start_date,
+                    start_time=start_time,
                     summary=ics_event.name,
                 )
             )
@@ -144,8 +148,11 @@ class Calendar:
         added_events = 0
         event_duration = ics_event.end.datetime - ics_event.begin.datetime
         rules = "\n".join([rule for rule in event_description.split("\n") if rule.startswith(SUPPORTED_RRULE_PROPERTIES)])
+        start_time = None
         for next_event_start_datetime in rrule.rrulestr(rules):
             next_event_start_datetime = next_event_start_datetime.astimezone(self.timezone)
+            if not start_time and not ics_event.all_day:
+                start_time = next_event_start_datetime.strftime("%H:%M")
             if next_event_start_datetime > self.end_date:
                 break
             next_event_end_datetime = next_event_start_datetime + event_duration
@@ -158,6 +165,7 @@ class Calendar:
                         end_date=next_event_end_datetime,
                         important=important,
                         start_date=next_event_start_datetime,
+                        start_time=start_time,
                         summary=ics_event.name,
                     )
                 )
@@ -176,5 +184,8 @@ class Calendar:
                 self.days[key].events.append(event)
 
     def _sort_events(self) -> None:
+        # Sort events in the day by hour and calendar order
         for key, events in self.days.items():
-            self.days[key].events.sort(key=lambda e: e.start_date)
+            day_events = [(i, event) for i, event in enumerate(self.days[key].events)]
+            day_events.sort(key=lambda item: (item[1].start_time or "00:00", item[0]))
+            self.days[key].events = [event for i, event in day_events]
