@@ -52,7 +52,12 @@ def get_months_preview(number_of_months) -> List[Month]:
 
 def _get_month_preview(month_offset: int) -> Month:
     today = datetime.today()
-    first_day_of_month = today.replace(day=1, month=today.month + month_offset)
+    year = today.year
+    month_with_offset = today.month + month_offset
+    if month_with_offset > 12:
+        year += int(month_with_offset / 12)
+        month_with_offset = month_with_offset % 12
+    first_day_of_month = today.replace(day=1, month=month_with_offset, year=year)
     day = first_day_of_month - timedelta(days=first_day_of_month.weekday())
     month = Month(number=first_day_of_month.month, year=first_day_of_month.year)
     while True:
