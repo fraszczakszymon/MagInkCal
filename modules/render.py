@@ -79,8 +79,8 @@ class TemplateRenderer:
         template = environment.get_template("calendar_template.jinja2")
 
         battery_icon = None
-        if battery_status and battery_status.level is not None:
-            battery_icon = self._get_battery_icon_name(battery_status.level)
+        if battery_status and (battery_status.level is not None or battery_status.is_charging):
+            battery_icon = self._get_battery_icon_name(battery_status)
 
         html = template.render(
             calendar=calendar,
@@ -104,14 +104,16 @@ class TemplateRenderer:
 
         logger.info("HTML file rendered")
 
-    def _get_battery_icon_name(self, battery_level: float) -> str:
-        if battery_level > 95:
+    def _get_battery_icon_name(self, battery_status: BatteryStatus) -> str:
+        if battery_status.is_charging:
+            return "charging"
+        if battery_status.level > 95:
             return "full"
-        if battery_level > 85:
+        if battery_status.level > 85:
             return "three-quarters"
-        if battery_level > 70:
+        if battery_status.level > 70:
             return "half"
-        if battery_level > 50:
+        if battery_status.level > 50:
             return "quarter"
         return "empty"
 
