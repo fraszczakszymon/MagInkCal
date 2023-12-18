@@ -56,6 +56,6 @@ def display_calendar():
 if __name__ == "__main__":
     try:
         display_calendar()
-    except Exception as e:
-        logger.error(e)
+    except Exception:
+        logger.info("Power off", exc_info=True)
         os.system("sudo shutdown -h now")

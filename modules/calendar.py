@@ -1,5 +1,7 @@
 import functools
+import json
 import logging
+import pathlib
 import requests
 
 from datetime import datetime, timedelta
@@ -83,6 +85,7 @@ class Calendar:
         self.config = config
         self.timezone = timezone(config.timezone)
         self.days = self._get_empty_days_range()
+        self.workdir = f"{pathlib.Path(__file__).parent.parent.absolute()}/build"
 
     @property
     @functools.lru_cache()
@@ -101,17 +104,39 @@ class Calendar:
 
     def load_events(self) -> None:
         logger.info(f"Fetching events from {len(self.config.calendars)} calendars")
-        number_of_events = 0
-        for calendar in self.config.calendars:
-            ics_calendar = IcsCalendar(requests.get(calendar.url).text)
-            for event in ics_calendar.events:
-                event_description = event.serialize()
-                if "RRULE" in event_description:
-                    number_of_events += self._process_recurring_event(event, event_description, calendar.important)
-                else:
-                    number_of_events += self._process_single_event(event, calendar.important)
-        self._sort_events()
-        logger.info(f"Fetched {number_of_events} events to display")
+        try:
+            number_of_events = 0
+            for calendar in self.config.calendars:
+                ics_calendar = IcsCalendar(requests.get(calendar.url).text)
+                for event in ics_calendar.events:
+                    event_description = event.serialize()
+                    if "RRULE" in event_description:
+                        number_of_events += self._process_recurring_event(event, event_description, calendar.important)
+                    else:
+                        number_of_events += self._process_single_event(event, calendar.important)
+            self._sort_events()
+            logger.info(f"Fetched {number_of_events} events to display")
+            self._save_events_to_file()
+        except Exception:
+            logger.error("Failed to fetch events", exc_info=True)
+            self._load_events_from_file()
+
+    def _save_events_to_file(self):
+        events = []
+        for label, day in self.days.items():
+            events.append(json.loads(day.json()))
+        with open(f"{self.workdir}/events.json", "w") as output_file:
+            output_file.write(json.dumps(events))
+        logger.info(f"Saved events to file")
+
+    def _load_events_from_file(self):
+        with open(f"{self.workdir}/events.json", "r") as input_file:
+            events = json.loads(input_file.read())
+            for event in events:
+                day = Day(**event)
+                if day.date_label in self.days:
+                    self.days[day.date_label] = day
+        logger.info(f"Loaded events from file")
 
     def _is_within_range(self, date: datetime) -> bool:
         return self.start_date <= date < self.end_date

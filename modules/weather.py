@@ -186,8 +186,8 @@ class Weather:
         try:
             result = requests.get(url)
             data = json.loads(result.text)
-        except Exception as e:
-            logger.error(f"Failed to fetch weather forecast: {e}")
+        except Exception:
+            logger.error(f"Failed to fetch weather forecast", exc_info=True)
             return None
 
         weather_api_forecast = WeatherApiForecastResponse(**data)
