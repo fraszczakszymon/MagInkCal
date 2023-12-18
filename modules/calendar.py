@@ -86,6 +86,7 @@ class Calendar:
         self.timezone = timezone(config.timezone)
         self.days = self._get_empty_days_range()
         self.workdir = f"{pathlib.Path(__file__).parent.parent.absolute()}/build"
+        self.offline_events = False
 
     @property
     @functools.lru_cache()
@@ -119,6 +120,7 @@ class Calendar:
             self._save_events_to_file()
         except Exception:
             logger.error("Failed to fetch events", exc_info=True)
+            self.offline_events = True
             self._load_events_from_file()
 
     def _save_events_to_file(self):

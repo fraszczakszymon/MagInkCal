@@ -90,6 +90,7 @@ class TemplateRenderer:
             i18n=self.config.i18n,
             max_events_per_day=self.config.max_events_per_day,
             month_number=int(calendar.today.strftime("%-m")),
+            no_wifi=calendar.offline_events,
             number_of_weeks=self._calculate_maximum_number_of_weeks(calendar),
             preview_months=get_months_preview(self.config.number_of_months),
             width=self.config.image_width,

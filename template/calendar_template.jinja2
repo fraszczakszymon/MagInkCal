@@ -185,9 +185,23 @@
             right: 16px;
             top: 15px;
         }
-        
+
         .battery img {
             width: 30px;
+        }
+
+        .no-wifi {
+            position: absolute;
+            right: 20px;
+            top: 18px;
+        }
+
+        .no-wifi.bellow-battery {
+            top: 48px;
+        }
+
+        .no-wifi img {
+            width: 24px;
         }
         
         .days-container {
@@ -387,6 +401,11 @@
         {% if battery_icon %}
             <div class="battery">
                 <img src="../static/images/battery-{{ battery_icon }}.svg" fill="dark-grey" />
+            </div>
+        {% endif %}
+        {% if no_wifi %}
+            <div class="no-wifi {% if battery_icon %}bellow-battery{% endif %}">
+                <img src="../static/images/no-wifi.svg" fill="red" />
             </div>
         {% endif %}
         <div class="days-container">
