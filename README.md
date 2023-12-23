@@ -74,7 +74,7 @@ crontab -e
 10. Specifically, add the following command to crontab so that the MagInkCal Python script runs each time the RPi is booted up.
 ```bash
 @reboot cp /boot/maginkcal.config.json /your/location/MagInkCal/config.json 2>/dev/null
-@reboot sleep 60 && cd /your/location/MagInkCal && git pull origin main; python3 maginkcal.py; poweroff
+@reboot sleep 60 && cd /your/location/MagInkCal && git pull origin main; python3 maginkcal.py; shutdown -h now
 ```
 
 11. That's all! Your Magic Calendar should now be refreshed at the time interval that you specified in the PiSugar2 web interface! 

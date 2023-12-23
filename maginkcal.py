@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import logging
+import requests
 import os
 
 from display.display import Display
@@ -17,16 +18,34 @@ log_setup()
 logger = logging.getLogger('MagInkCal')
 
 
+def is_connected_to_internet(url='https://www.google.com/', timeout=5):
+    try:
+        requests.head(url, timeout=timeout)
+        return True
+    except requests.ConnectionError:
+        logger.info("No internet connection available")
+    return False
+
+
 def display_calendar():
     config = ConfigLoader().config
+    has_internet = is_connected_to_internet()
     power = Power()
-    power.sync_time()
+    scheduler = Scheduler(config)
+
+    if has_internet:
+        power.sync_time()
+
+    scheduler.schedule_next_wakeup()
+
     battery_status = power.battery_status
 
     calendar = Calendar(config)
     calendar.load_events()
 
-    weather_forecast = Weather(config).forecast
+    weather_forecast = None
+    if has_internet:
+        weather_forecast = Weather(config).forecast
 
     renderer = TemplateRenderer(config)
 
@@ -44,9 +63,6 @@ def display_calendar():
     display_service.sleep()
 
     logger.info("Completed daily calendar update")
-
-    scheduler = Scheduler(config)
-    scheduler.schedule_next_wakeup()
 
     if config.auto_power_off and (config.auto_power_off_while_charging or not battery_status.is_charging):
         logger.info("Power off")
