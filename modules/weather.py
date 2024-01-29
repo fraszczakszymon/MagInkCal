@@ -204,7 +204,7 @@ class Weather:
                 if forecast_hour.time.endswith(FORECAST_HOURS):
                     forecast_hours.append(
                         ForecastHour(
-                            condition=forecast_hour.condition.text,
+                            condition=forecast_hour.condition.text.strip(),
                             hour=forecast_hour.time.split(" ")[-1],
                             is_day=forecast_hour.is_day == 1,
                             temperature=round(forecast_hour.temp_c)
