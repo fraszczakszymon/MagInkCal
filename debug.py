@@ -11,7 +11,7 @@ from modules.logger import log_setup
 from modules.power import Power
 from modules.render import TemplateRenderer
 from modules.schedule import Scheduler
-from modules.weather import Weather
+from modules.weather import ForecastConditionEnum, Weather
 
 assert len(sys.argv) == 2, f"Expected 1 argument, {len(sys.argv) - 1} given"
 cmd = sys.argv[1]
@@ -55,7 +55,7 @@ elif cmd == "weather":
     forecast = Weather(config).forecast
     print(forecast.day)
     for hour in forecast.hours:
-        print(f"  {hour.hour}: {hour.condition} - {hour.temperature}°C")
+        print(f"  {hour.hour}: {hour.condition.name} - {hour.temperature}°C")
 elif cmd == "scheduler_times":
     scheduler = Scheduler(config)
     now = datetime.now().astimezone(timezone(config.timezone))

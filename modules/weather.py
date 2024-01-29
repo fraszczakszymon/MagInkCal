@@ -15,123 +15,126 @@ logger = logging.getLogger('weather')
 
 FORECAST_HOURS = ("06:00", "12:00", "15:00", "18:00", "00:00")
 
+
+class ForecastConditionEnum(Enum):
+    sunny = 1000
+    partly_cloudy = 1003
+    cloudy = 1006
+    overcast = 1009
+    mist = 1030
+    patchy_rain_possible = 1063
+    patchy_snow_possible = 1066
+    patchy_sleet_possible = 1069
+    patchy_freezing_drizzle_possible = 1072
+    thundery_outbreaks_possible = 1087
+    blowing_snow = 1114
+    blizzard = 1117
+    fog = 1135
+    freezing_fog = 1147
+    patchy_light_drizzle = 1150
+    light_drizzle = 1153
+    freezing_drizzle = 1168
+    heavy_freezing_drizzle = 1171
+    patchy_light_rain = 1180
+    light_rain = 1183
+    moderate_rain_at_times = 1186
+    moderate_rain = 1189
+    heavy_rain_at_times = 1192
+    heavy_rain = 1195
+    light_freezing_rain = 1198
+    moderate_or_heavy_freezing_rain = 1201
+    light_sleet = 1204
+    moderate_or_heavy_sleet = 1207
+    patchy_light_snow = 1210
+    light_snow = 1213
+    patchy_moderate_snow = 1216
+    moderate_snow = 1219
+    patchy_heavy_snow = 1222
+    heavy_snow = 1225
+    ice_pellets = 1237
+    light_rain_shower = 1240
+    moderate_or_heavy_rain_shower = 1243
+    torrential_rain_shower = 1246
+    light_sleet_showers = 1249
+    moderate_or_heavy_sleet_showers = 1252
+    light_snow_showers = 1255
+    moderate_or_heavy_snow_showers = 1258
+    light_showers_of_ice_pellets = 1261
+    moderate_or_heavy_showers_of_ice_pellets = 1264
+    patchy_light_rain_with_thunder = 1273
+    moderate_or_heavy_rain_with_thunder = 1276
+    patchy_light_snow_with_thunder = 1279
+    moderate_or_heavy_snow_with_thunder = 1282
+
+
 ICONS_MAP = {
-    "Sunny": "02",
-    "Clear": "03",
-    "Partly cloudy": "08",
-    "Partly cloudy night": "09",
-    "Cloudy": "14",
-    "Overcast": "25",
-    "Mist": "12",
-    "Patchy rain possible": "17",
-    "Patchy snow possible": "21",
-    "Patchy sleet possible": "21",
-    "Patchy freezing drizzle possible": "21",
-    "Thundery outbreaks possible": "15",
-    "Blowing snow": "21",
-    "Blizzard": "23",
-    "Fog": "12",
-    "Freezing fog": "12",
-    "Patchy light drizzle": "17",
-    "Light drizzle": "17",
-    "Freezing drizzle": "17",
-    "Heavy freezing drizzle": "17",
-    "Patchy light rain": "17",
-    "Light rain": "17",
-    "Moderate rain at times": "17",
-    "Moderate rain": "17",
-    "Heavy rain at times": "18",
-    "Heavy rain": "18",
-    "Light freezing rain": "24",
-    "Moderate or heavy freezing rain": "24",
-    "Light sleet": "24",
-    "Moderate or heavy sleet": "24",
-    "Patchy light snow": "21",
-    "Light snow": "21",
-    "Patchy moderate snow": "21",
-    "Moderate snow": "21",
-    "Patchy heavy snow": "23",
-    "Heavy snow": "23",
-    "Ice pellets": "24",
-    "Light rain shower": "17",
-    "Moderate or heavy rain shower": "18",
-    "Torrential rain shower": "18",
-    "Light sleet showers": "24",
-    "Moderate or heavy sleet showers": "24",
-    "Light snow showers": "21",
-    "Moderate or heavy snow showers": "23",
-    "Light showers of ice pellets": "24",
-    "Moderate or heavy showers of ice pellets": "24",
-    "Patchy light rain with thunder": "15",
-    "Moderate or heavy rain with thunder": "15",
-    "Patchy light snow with thunder": "26",
-    "Moderate or heavy snow with thunder": "26",
+    ForecastConditionEnum.sunny: "02",
+    ForecastConditionEnum.partly_cloudy: "08",
+    ForecastConditionEnum.cloudy: "14",
+    ForecastConditionEnum.overcast: "25",
+    ForecastConditionEnum.mist: "12",
+    ForecastConditionEnum.patchy_rain_possible: "17",
+    ForecastConditionEnum.patchy_snow_possible: "21",
+    ForecastConditionEnum.patchy_sleet_possible: "21",
+    ForecastConditionEnum.patchy_freezing_drizzle_possible: "21",
+    ForecastConditionEnum.thundery_outbreaks_possible: "15",
+    ForecastConditionEnum.blowing_snow: "21",
+    ForecastConditionEnum.blizzard: "23",
+    ForecastConditionEnum.fog: "12",
+    ForecastConditionEnum.freezing_fog: "12",
+    ForecastConditionEnum.patchy_light_drizzle: "17",
+    ForecastConditionEnum.light_drizzle: "17",
+    ForecastConditionEnum.freezing_drizzle: "17",
+    ForecastConditionEnum.heavy_freezing_drizzle: "17",
+    ForecastConditionEnum.patchy_light_rain: "17",
+    ForecastConditionEnum.light_rain: "17",
+    ForecastConditionEnum.moderate_rain_at_times: "17",
+    ForecastConditionEnum.moderate_rain: "17",
+    ForecastConditionEnum.heavy_rain_at_times: "18",
+    ForecastConditionEnum.heavy_rain: "18",
+    ForecastConditionEnum.light_freezing_rain: "24",
+    ForecastConditionEnum.moderate_or_heavy_freezing_rain: "24",
+    ForecastConditionEnum.light_sleet: "24",
+    ForecastConditionEnum.moderate_or_heavy_sleet: "24",
+    ForecastConditionEnum.patchy_light_snow: "21",
+    ForecastConditionEnum.light_snow: "21",
+    ForecastConditionEnum.patchy_moderate_snow: "21",
+    ForecastConditionEnum.moderate_snow: "21",
+    ForecastConditionEnum.patchy_heavy_snow: "23",
+    ForecastConditionEnum.heavy_snow: "23",
+    ForecastConditionEnum.ice_pellets: "24",
+    ForecastConditionEnum.light_rain_shower: "17",
+    ForecastConditionEnum.moderate_or_heavy_rain_shower: "18",
+    ForecastConditionEnum.torrential_rain_shower: "18",
+    ForecastConditionEnum.light_sleet_showers: "24",
+    ForecastConditionEnum.moderate_or_heavy_sleet_showers: "24",
+    ForecastConditionEnum.light_snow_showers: "21",
+    ForecastConditionEnum.moderate_or_heavy_snow_showers: "23",
+    ForecastConditionEnum.light_showers_of_ice_pellets: "24",
+    ForecastConditionEnum.moderate_or_heavy_showers_of_ice_pellets: "24",
+    ForecastConditionEnum.patchy_light_rain_with_thunder: "15",
+    ForecastConditionEnum.moderate_or_heavy_rain_with_thunder: "15",
+    ForecastConditionEnum.patchy_light_snow_with_thunder: "26",
+    ForecastConditionEnum.moderate_or_heavy_snow_with_thunder: "26",
+}
+
+NIGHT_ICONS_MAP = {
+    ForecastConditionEnum.sunny: "03",
+    ForecastConditionEnum.partly_cloudy: "09",
 }
 
 
-class ForecastConditionEnum(Enum):
-    sunny = "Sunny"
-    partly_cloudy = "Partly cloudy"
-    cloudy = "Cloudy"
-    overcast = "Overcast"
-    mist = "Mist"
-    patchy_rain_possible = "Patchy rain possible"
-    patchy_snow_possible = "Patchy snow possible"
-    patchy_sleet_possible = "Patchy sleet possible"
-    patchy_freezing_drizzle_possible = "Patchy freezing drizzle possible"
-    thundery_outbreaks_possible = "Thundery outbreaks possible"
-    blowing_snow = "Blowing snow"
-    blizzard = "Blizzard"
-    fog = "Fog"
-    freezing_for = "Freezing fog"
-    patchy_light_drizzle = "Patchy light drizzle"
-    light_drizzle = "Light drizzle"
-    freezing_drizzle = "Freezing drizzle"
-    heavy_freezing_drizzle = "Heavy freezing drizzle"
-    patchy_light_rain = "Patchy light rain"
-    light_rain = "Light rain"
-    moderate_rain_at_times = "Moderate rain at times"
-    moderate_rain = "Moderate rain"
-    heavy_rain_at_times = "Heavy rain at times"
-    heavy_rain = "Heavy rain"
-    light_freezing_rain = "Light freezing rain"
-    moderate_or_heavy_freezing_rain = "Moderate or heavy freezing rain"
-    light_sleet = "Light sleet"
-    moderate_or_heavy_sleet = "Moderate or heavy sleet"
-    patchy_light_snow = "Patchy light snow"
-    light_snow = "Light snow"
-    patchy_moderate_snow = "Patchy moderate snow"
-    moderate_snow = "Moderate snow"
-    patchy_heavy_snow = "Patchy heavy snow"
-    heavy_snow = "Heavy snow"
-    ice_pellets = "Ice pellets"
-    light_rain_shower = "Light rain shower"
-    moderate_or_heavy_rain_shower = "Moderate or heavy rain shower"
-    torrential_rain_shower = "Torrential rain shower"
-    light_sleet_showers = "Light sleet showers"
-    moderate_or_heavy_sleet_showers = "Moderate or heavy sleet showers"
-    light_snow_showers = "Light snow showers"
-    moderate_or_heavy_snow_showers = "Moderate or heavy snow showers"
-    light_showers_of_ice_pellets = "Light showers of ice pellets"
-    moderate_or_heavy_showers_of_ice_pellets = "Moderate or heavy showers of ice pellets"
-    patchy_light_rain_with_thunder = "Patchy light rain with thunder"
-    moderate_or_heavy_rain_with_thunder = "Moderate or heavy rain with thunder"
-    patchy_light_snow_with_thunder = "Patchy light snow with thunder"
-    moderate_or_heavy_snow_with_thunder = "Moderate or heavy snow with thunder"
-
-
 class ForecastHour(BaseModel):
-    condition: str
+    condition: ForecastConditionEnum
     hour: str
     is_day: bool
     temperature: int
 
     @property
     def icon(self):
-        night_condition = f"{self.condition} night"
         icon_index = ICONS_MAP[self.condition]
-        if not self.is_day and f"{self.condition} night" in ICONS_MAP:
-            icon_index = ICONS_MAP[night_condition]
+        if not self.is_day and self.condition in NIGHT_ICONS_MAP:
+            icon_index = NIGHT_ICONS_MAP[self.condition]
         return f"001lighticons-{icon_index}.png"
 
 
@@ -141,6 +144,7 @@ class ForecastDay(BaseModel):
 
 
 class WeatherApiForecastCondition(BaseModel):
+    code: ForecastConditionEnum
     text: str
 
 
@@ -204,7 +208,7 @@ class Weather:
                 if forecast_hour.time.endswith(FORECAST_HOURS):
                     forecast_hours.append(
                         ForecastHour(
-                            condition=forecast_hour.condition.text.strip(),
+                            condition=ForecastConditionEnum(forecast_hour.condition.code),
                             hour=forecast_hour.time.split(" ")[-1],
                             is_day=forecast_hour.is_day == 1,
                             temperature=round(forecast_hour.temp_c)
